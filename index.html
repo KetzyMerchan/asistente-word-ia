@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente de Comprensión</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="https://cdn-icons-png.flaticon.com/512/4712/4712104.png" alt="icono">
+            </div>
+            <h1>Asistente de Comprensión</h1>
+        </div>
+
+        <div class="welcome-card">
+            <h2>Hola</h2>
+            <p>Asistente para consultar significado de términos</p>
+            <div class="steps">
+                <ul>
+                    <li>Selecciona cualquier palabra o frase</li>
+                    <li>Clic derecho y selecciona "Consultar"</li>
+                    <li>El panel se abre automáticamente</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="selection-box">
+            <div class="selection-label">TEXTO SELECCIONADO</div>
+            <div id="selectedDisplay" class="selected-text empty">Ninguno</div>
+        </div>
+
+        <button id="explainBtn" class="btn-primary">
+            <span>Consultar</span>
+        </button>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <span>Procesando...</span>
+        </div>
+
+        <div id="result"></div>
+
+        <div class="footer">
+            Asistente de Comprensión v1.0
+        </div>
+    </div>
+
+    
+    <script src="app.js"></script>
+</body>
+</html>

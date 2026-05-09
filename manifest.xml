@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp  
+    xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+    xsi:type="TaskPaneApp">
+
+    <Id>e3f4a5b6-c7d8-90e1-f2a3-b4c5d6e7f8a9</Id>
+    <Version>1.0.0.0</Version>
+    <ProviderName>Edelis Bolivar</ProviderName>
+    <DefaultLocale>es-ES</DefaultLocale>
+    <DisplayName DefaultValue="Asistente de Comprension Inteligente"/>
+    <Description DefaultValue="Explica terminos seleccionados en tu documento"/>
+    
+    <IconUrl DefaultValue="https://cdn-icons-png.flaticon.com/512/4712/4712104.png"/>
+    <HighResolutionIconUrl DefaultValue="https://cdn-icons-png.flaticon.com/512/4712/4712104.png"/>
+    <SupportUrl DefaultValue="https://github.com/Edelis2410/asistente-word"/>
+    
+    <DefaultSettings>
+        <SourceLocation DefaultValue="https://edelis2410.github.io/asistente-word/index.html"/>
+    </DefaultSettings>
+    
+    <Permissions>ReadWriteDocument</Permissions>
+    
+    <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+        <Requirements>
+            <bt:Sets DefaultMinVersion="1.1">
+                <bt:Set Name="WordApi"/>
+            </bt:Sets>
+        </Requirements>
+        
+        <Hosts>
+            <Host xsi:type="Document">
+                <DesktopFormFactor>
+                    <GetStarted>
+                        <Title resid="GetStarted.Title"/>
+                        <Description resid="GetStarted.Description"/>
+                        <LearnMoreUrl resid="GetStarted.LearnMoreUrl"/>
+                    </GetStarted>
+                    
+                    <FunctionFile resid="Taskpane.Url|FunctionFile"/>
+                    
+                    <ExtensionPoint xsi:type="PrimaryCommandSurface">
+                        <OfficeTab id="TabHome">
+                            <Group id="CommandsGroup">
+                                <Label resid="CommandsGroup.Label"/>
+                                <Icon>
+                                    <bt:Image size="16" resid="Icon.16x16"/>
+                                    <bt:Image size="32" resid="Icon.32x32"/>
+                                    <bt:Image size="80" resid="Icon.80x80"/>
+                                </Icon>
+                                <Control xsi:type="Button" id="TaskpaneButton">
+                                    <Label resid="TaskpaneButton.Label"/>
+                                    <Supertip>
+                                        <Title resid="TaskpaneButton.Title"/>
+                                        <Description resid="TaskpaneButton.Description"/>
+                                    </Supertip>
+                                    <Icon>
+                                        <bt:Image size="16" resid="Icon.16x16"/>
+                                        <bt:Image size="32" resid="Icon.32x32"/>
+                                        <bt:Image size="80" resid="Icon.80x80"/>
+                                    </Icon>
+                                    <Action xsi:type="ShowTaskpane">
+                                        <SourceLocation resid="Taskpane.Url"/>
+                                    </Action>
+                                </Control>
+                            </Group>
+                        </OfficeTab>
+                    </ExtensionPoint>
+                    
+                    <ExtensionPoint xsi:type="ContextMenu">
+                        <OfficeMenu id="ContextMenuText">
+                            <Control xsi:type="Button" id="ContextMenuButton">
+                                <Label resid="ContextMenuButton.Label"/>
+                                <Supertip>
+                                    <Title resid="ContextMenuButton.Title"/>
+                                    <Description resid="ContextMenuButton.Description"/>
+                                </Supertip>
+                                <Icon>
+                                    <bt:Image size="16" resid="Icon.16x16"/>
+                                    <bt:Image size="32" resid="Icon.32x32"/>
+                                    <bt:Image size="80" resid="Icon.80x80"/>
+                                </Icon>
+                                <Action xsi:type="ShowTaskpane">
+                                    <SourceLocation resid="Taskpane.Url"/>
+                                </Action>
+                            </Control>
+                        </OfficeMenu>
+                    </ExtensionPoint>
+                </DesktopFormFactor>
+            </Host>
+        </Hosts>
+        
+        <Resources>
+            <bt:Images>
+                <bt:Image id="Icon.16x16" DefaultValue="https://cdn-icons-png.flaticon.com/512/4712/4712104.png"/>
+                <bt:Image id="Icon.32x32" DefaultValue="https://cdn-icons-png.flaticon.com/512/4712/4712104.png"/>
+                <bt:Image id="Icon.80x80" DefaultValue="https://cdn-icons-png.flaticon.com/512/4712/4712104.png"/>
+            </bt:Images>
+            <bt:Urls>
+                <bt:Url id="Taskpane.Url" DefaultValue="https://edelis2410.github.io/asistente-word/index.html"/>
+                <bt:Url id="Taskpane.Url|FunctionFile" DefaultValue="https://edelis2410.github.io/asistente-word/function-file.html"/>
+                <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://github.com/Edelis2410/asistente-word"/>
+            </bt:Urls>
+            <bt:ShortStrings>
+                <bt:String id="CommandsGroup.Label" DefaultValue="Asistente IA"/>
+                <bt:String id="TaskpaneButton.Label" DefaultValue="Abrir Asistente"/>
+                <bt:String id="TaskpaneButton.Title" DefaultValue="Asistente de Comprension"/>
+                <bt:String id="ContextMenuButton.Label" DefaultValue="Consultar"/>
+                <bt:String id="ContextMenuButton.Title" DefaultValue="Explicar seleccion"/>
+                <bt:String id="GetStarted.Title" DefaultValue="Complemento listo"/>
+            </bt:ShortStrings>
+            <bt:LongStrings>
+                <bt:String id="TaskpaneButton.Description" DefaultValue="Abre el panel del asistente"/>
+                <bt:String id="ContextMenuButton.Description" DefaultValue="Obtiene una explicacion del texto seleccionado"/>
+                <bt:String id="GetStarted.Description" DefaultValue="Selecciona texto, clic derecho, Explicar con IA"/>
+            </bt:LongStrings>
+        </Resources>
+    </VersionOverrides>
+</OfficeApp>
