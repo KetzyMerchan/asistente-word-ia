@@ -13,9 +13,9 @@ document.getElementById("explainBtn").onclick = function() {
             var selection = context.document.getSelection();
             selection.load("text");
             
-            // Obtener contexto: buscar el parrafo completo
-            var range = selection.getRange();
-            range.load("text");
+            // Obtener automaticamente el parrafo donde esta la seleccion
+            var paragraph = selection.paragraphs.getFirst();
+            paragraph.load("text");
             
             await context.sync();
             
@@ -31,7 +31,7 @@ document.getElementById("explainBtn").onclick = function() {
             updateSelectedTextDisplay(selectedText);
             
             // Obtener contexto mas amplio (el parrafo completo)
-            var contextoCompleto = range.text || selectedText;
+            var contextoCompleto = paragraph.text || selectedText;
             
             // Llamar API para obtener la explicacion
             var explicacion = await consultarIA(selectedText, contextoCompleto);
