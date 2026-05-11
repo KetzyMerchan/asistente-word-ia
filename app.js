@@ -1,6 +1,3 @@
-// La API Key se carga desde config.js
-//const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
-
 Office.onReady(function() {
     console.log("Office.js listo");
     updateSelectedText();
@@ -36,8 +33,8 @@ document.getElementById("explainBtn").onclick = function() {
             // Obtener contexto mas amplio (el parrafo completo)
             var contextoCompleto = range.text || selectedText;
             
-            // Llamar a Gemini API para obtener la explicacion
-            var explicacion = await llamarGemini(selectedText, contextoCompleto);
+            // Llamar API para obtener la explicacion
+            var explicacion = await consultarIA(selectedText, contextoCompleto);
             
             showResult(explicacion, "success");
             showLoading(false);
@@ -53,89 +50,16 @@ document.getElementById("explainBtn").onclick = function() {
         showLoading(false);
     });
 };
-/*
-async function llamarGemini(palabra, contexto) {
-    if (!GEMINI_API_KEY) {
-        return "Error: No se ha configurado la API Key de Gemini. Asegurate de que el archivo config.js existe y contiene la clave.";
-    }
-    
-    // Construir el prompt para Gemini
-    const prompt = `Eres un asistente academico especializado en explicar terminos en contexto.
 
-El usuario ha seleccionado la siguiente palabra o frase: "${palabra}"
-
-El texto completo donde aparece es: "${contexto}"
-
-Por favor, explica que significa esta palabra o frase EN EL CONTEXTO ESPECIFICO de este texto.
-Si la palabra tiene diferentes significados segun la disciplina (medicina, derecho, informatica, etc.), enfocate en el que corresponde al texto proporcionado.
-
-Instrucciones:
-- Responde en español
-- Se claro, conciso y directo
-- No uses markdown ni formato especial
-- La explicacion debe ser de maximo 3 oraciones
-- Enfocate en el significado contextual, no des definiciones genericas`;
-
-    try {
-        const respuesta = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                contents: [
-                    {
-                        parts: [
-                            {
-                                text: prompt
-                            }
-                        ]
-                    }
-                ],
-                generationConfig: {
-                    temperature: 0.2,
-                    maxOutputTokens: 300
-                }
-            })
-        });
-        
-        if (!respuesta.ok) {
-            const errorData = await respuesta.json();
-            console.error("Error Gemini:", errorData);
-            return "Error al consultar Gemini API. Verifica tu API Key o conexion a internet.";
-        }
-        
-        const datos = await respuesta.json();
-        
-        // Extraer la explicacion de la respuesta
-        if (datos.candidates && datos.candidates[0] && datos.candidates[0].content) {
-            var explicacion = datos.candidates[0].content.parts[0].text;
-            return explicacion;
-        } else {
-            return "No se pudo obtener una explicacion. Intenta de nuevo.";
-        }
-        
-    } catch (error) {
-        console.error("Error en llamada Gemini:", error);
-        return "Error de conexion con Gemini API. Verifica tu conexion a internet.";
-    }
-}
-*/
-
-async function llamarGemini(palabra, contexto) {
+async function consultarIA(palabra, contexto) {
 
     const prompt = `Eres un asistente academico especializado en explicar terminos en contexto.
 
-El usuario ha seleccionado la siguiente palabra o frase: "${palabra}"
+El usuario ha seleccionado: "${palabra}"
 
-El texto completo donde aparece es: "${contexto}"
+Contexto: "${contexto}"
 
-Por favor, explica que significa esta palabra o frase EN EL CONTEXTO ESPECIFICO de este texto.
-
-Instrucciones:
-- Responde en español
-- Se claro y directo
-- Maximo 3 oraciones`;
+Explica de forma clara y breve (max 3 oraciones).`;
 
     try {
 
@@ -144,35 +68,26 @@ Instrucciones:
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-                prompt: prompt
-            })
+            body: JSON.stringify({ prompt })
         });
 
+        const data = await respuesta.json();
+        
+
         if (!respuesta.ok) {
-            return "Error al conectar con el servidor local.";
+            console.error("Error backend:", data);
+            return data.error || "Error al conectar con el servidor.";
         }
 
-        const datos = await respuesta.json();
-
-        if (
-            datos.candidates &&
-            datos.candidates.length > 0 &&
-            datos.candidates[0].content &&
-            datos.candidates[0].content.parts &&
-            datos.candidates[0].content.parts.length > 0
-        ) {
-            return datos.candidates[0].content.parts[0].text;
-        }
-
-        return "No se obtuvo respuesta de Gemini.";
+        return data.respuesta || "Sin respuesta del modelo.";
 
     } catch (error) {
 
-        console.error(error);
-
+        console.error("Error fetch:", error);
         return "Error de conexion con el backend.";
     }
+
+    
 }
 
 function updateSelectedText() {
