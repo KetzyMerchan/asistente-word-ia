@@ -1,6 +1,17 @@
 Office.onReady(function() {
+
     console.log("Office.js listo");
+
+    // Actualizar texto seleccionado al abrir panel
     updateSelectedText();
+
+    // Detectar cambios de seleccion mientras el panel esta abierto
+    document.addEventListener("visibilitychange", function() {
+
+        if (!document.hidden) {
+            updateSelectedText();
+        }
+    });
 });
 
 document.getElementById("explainBtn").onclick = function() {
