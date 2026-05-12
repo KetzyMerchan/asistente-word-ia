@@ -1,5 +1,11 @@
 Office.onReady(function() {
     console.log("Office.js listo");
+    
+    // Actualizar seleccion al abrir o volver al panel
+    window.addEventListener("focus", function () {
+
+        cargarSeleccionActual();
+    });
 });
 
 document.getElementById("explainBtn").onclick = function() {
@@ -131,4 +137,24 @@ function showLoading(show) {
 function nuevaConsulta() {
     clearResult();
     updateSelectedTextDisplay("");
+}
+
+function cargarSeleccionActual() {
+
+    Word.run(function (context) {
+
+        var selection = context.document.getSelection();
+        selection.load("text");
+
+        return context.sync().then(function () {
+
+            updateSelectedTextDisplay(selection.text);
+
+        });
+
+    }).catch(function (error) {
+
+        console.log("No se pudo actualizar seleccion:", error);
+
+    });
 }
