@@ -1,14 +1,5 @@
-let ultimoTextoSeleccionado = "";
-
 Office.onReady(function() {
-
     console.log("Office.js listo");
-
-    // Actualizar al iniciar
-    updateSelectedText();
-
-    // Revisar cambios de seleccion automaticamente
-    setInterval(updateSelectedText, 800);
 });
 
 document.getElementById("explainBtn").onclick = function() {
@@ -64,11 +55,8 @@ async function consultarIA(palabra, contexto) {
     const prompt = `Eres un asistente academico especializado en explicar terminos en contexto.
 
 El usuario ha seleccionado: "${palabra}"
-
 Contexto: "${contexto}"
-
 Explica de forma clara y breve (max 3 oraciones).`;
-
     try {
 
         const respuesta = await fetch("http://localhost:3000/ia", {
@@ -78,9 +66,7 @@ Explica de forma clara y breve (max 3 oraciones).`;
             },
             body: JSON.stringify({ prompt })
         });
-
         const data = await respuesta.json();
-        
 
         if (!respuesta.ok) {
             console.error("Error backend:", data);
@@ -94,35 +80,6 @@ Explica de forma clara y breve (max 3 oraciones).`;
         console.error("Error fetch:", error);
         return "Error de conexion con el backend.";
     }
-
-    
-}
-
-function updateSelectedText() {
-
-    Word.run(function(context) {
-
-        var selection = context.document.getSelection();
-        selection.load("text");
-
-        return context.sync().then(function() {
-
-            var textoActual = selection.text.trim();
-
-            // Detectar si cambio la seleccion
-            if (textoActual !== ultimoTextoSeleccionado) {
-
-                ultimoTextoSeleccionado = textoActual;
-
-                // Actualizar texto mostrado
-                updateSelectedTextDisplay(textoActual);
-
-                // Limpiar respuesta anterior
-                clearResult();
-            }
-        });
-
-    }).catch(function() {});
 }
 
 function updateSelectedTextDisplay(text) {
@@ -150,7 +107,12 @@ function showResult(msg, type) {
     }
     // Limpiar markdown basico (negritas, etc.)
     var mensajeLimpio = msg.replace(/\*\*/g, "").replace(/\*/g, "");
-    resultDiv.innerHTML = "<div class=\"result-box\" style=\"background:" + bg + "; border-left-color:" + border + ";\">" + mensajeLimpio.replace(/\n/g, "<br>") + "</div>";
+    resultDiv.innerHTML =
+    "<div class=\"result-box\" style=\"background:" + bg + "; border-left-color:" + border + ";\">" +
+    mensajeLimpio.replace(/\n/g, "<br>") +
+    "<br><br>" +
+    "<button onclick='nuevaConsulta()' class='new-query-btn'>Nueva consulta</button>" +
+    "</div>";
 }
 
 function clearResult() {
@@ -164,4 +126,9 @@ function showLoading(show) {
     } else {
         loader.classList.add("hidden");
     }
+}
+
+function nuevaConsulta() {
+    clearResult();
+    updateSelectedTextDisplay("");
 }
