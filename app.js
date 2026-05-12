@@ -1,17 +1,14 @@
+let ultimoTextoSeleccionado = "";
+
 Office.onReady(function() {
 
     console.log("Office.js listo");
 
-    // Actualizar texto seleccionado al abrir panel
+    // Actualizar al iniciar
     updateSelectedText();
 
-    // Detectar cambios de seleccion mientras el panel esta abierto
-    document.addEventListener("visibilitychange", function() {
-
-        if (!document.hidden) {
-            updateSelectedText();
-        }
-    });
+    // Revisar cambios de seleccion automaticamente
+    setInterval(updateSelectedText, 800);
 });
 
 document.getElementById("explainBtn").onclick = function() {
@@ -102,12 +99,29 @@ Explica de forma clara y breve (max 3 oraciones).`;
 }
 
 function updateSelectedText() {
+
     Word.run(function(context) {
+
         var selection = context.document.getSelection();
         selection.load("text");
+
         return context.sync().then(function() {
-            updateSelectedTextDisplay(selection.text);
+
+            var textoActual = selection.text.trim();
+
+            // Detectar si cambio la seleccion
+            if (textoActual !== ultimoTextoSeleccionado) {
+
+                ultimoTextoSeleccionado = textoActual;
+
+                // Actualizar texto mostrado
+                updateSelectedTextDisplay(textoActual);
+
+                // Limpiar respuesta anterior
+                clearResult();
+            }
         });
+
     }).catch(function() {});
 }
 
