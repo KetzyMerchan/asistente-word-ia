@@ -33,8 +33,23 @@
             <div id="selectedDisplay" class="selected-text empty">Ninguno</div>
         </div>
 
+        <!-- TIPOS DE EXPLICACIÓN -->
+        <div class="tipo-explicacion">
+            <div class="selection-label">TIPO DE EXPLICACIÓN</div>
+
+            <div class="pill-container">
+                <div class="pill-slider sencillo" id="pill-slider"></div>
+
+                <button id="btn-sencillo" class="active" onclick="setTipo('sencillo')">
+                    Sencilla
+                </button>
+                <button id="btn-tecnico" onclick="setTipo('tecnico')"> Técnica</button>
+                <button id="btn-ejemplo" onclick="setTipo('ejemplo')"> Práctica</button>
+            </div>
+        </div>
+        
         <button id="explainBtn" class="btn-primary">
-            <span>Consultar</span>
+            <span>Explicar</span>
         </button>
 
         <div id="loading" class="loading hidden">

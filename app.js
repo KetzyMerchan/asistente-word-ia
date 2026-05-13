@@ -8,6 +8,8 @@ Office.onReady(function() {
     });
 });
 
+let tipoExplicacion = "sencillo";
+
 document.getElementById("explainBtn").onclick = function() {
     showLoading(true);
     clearResult();
@@ -58,11 +60,29 @@ document.getElementById("explainBtn").onclick = function() {
 
 async function consultarIA(palabra, contexto) {
 
-    const prompt = `Eres un asistente academico especializado en explicar terminos en contexto.
+    const prompt = `
+    Eres un asistente académico integrado en Microsoft Word.
 
-El usuario ha seleccionado: "${palabra}"
-Contexto: "${contexto}"
-Explica de forma clara y breve (max 3 oraciones).`;
+    Texto seleccionado:
+    "${palabra}"
+
+    Contexto:
+    "${contexto}"
+
+    Tipo de explicación: ${tipoExplicacion}
+
+    Instrucciones según tipo:
+    - sencillo: explicación básica para estudiantes principiantes
+    - tecnico: explicación formal, académica y precisa
+    - ejemplo: incluye un ejemplo práctico para facilitar comprensión
+
+    Reglas:
+    - Español
+    - Máximo 3 oraciones
+    - No inventar información
+    - No repetir el contexto
+    `;
+
     try {
 
         const respuesta = await fetch("http://localhost:3000/ia", {
@@ -125,6 +145,10 @@ function showResult(msg, type) {
     "<button onclick='nuevaConsulta()' class='new-query-btn'>" +
         "Nueva consulta" +
     "</button>";
+
+    // Cambiar texto del botón después de responder
+    document.querySelector("#explainBtn span").textContent =
+        "Generar otra explicación";
 }
 
 function clearResult() {
@@ -143,6 +167,46 @@ function showLoading(show) {
 function nuevaConsulta() {
     clearResult();
     updateSelectedTextDisplay("");
+    // Restaurar texto original del botón
+    document.querySelector("#explainBtn span").textContent =
+        "Explicar";
+}
+
+function setTipo(tipo) {
+    tipoExplicacion = tipo;
+
+    const slider = document.getElementById("pill-slider");
+
+    if (!slider) return;
+
+    // mover slider (mejor controlado)
+    const positions = {
+        sencillo: "0%",
+        tecnico: "100%",
+        ejemplo: "200%"
+    };
+
+    slider.style.transform = `translateX(${positions[tipo]})`;
+
+    // cambiar color dinámico del slider
+    slider.className = "pill-slider " + tipo;
+
+    // sincronizar botones visuales
+    document.querySelectorAll(".pill-container button").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    const activeBtn = document.getElementById("btn-" + tipo);
+    if (activeBtn) activeBtn.classList.add("active");
+
+    // animación correcta (fluida real)
+    slider.animate([
+        { transform: `translateX(${positions[tipo]}) scale(0.95)` },
+        { transform: `translateX(${positions[tipo]}) scale(1)` }
+    ], {
+        duration: 200,
+        easing: "cubic-bezier(0.4, 0, 0.2, 1)"
+    });
 }
 
 function cargarSeleccionActual() {
@@ -164,3 +228,14 @@ function cargarSeleccionActual() {
 
     });
 }
+
+// vibración visual suave extra
+window.addEventListener("load", () => {
+    document.querySelector(".pill-container")?.animate([
+        { transform: "scale(0.98)" },
+        { transform: "scale(1)" }
+    ], {
+        duration: 120,
+        easing: "ease-out"
+    });
+});

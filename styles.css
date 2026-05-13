@@ -231,3 +231,129 @@ h1 {
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(52, 168, 83, 0.3);
 }
+
+/* =========================
+   FLUENT UI - TIPOS EXPLICACIÓN
+========================= */
+
+.tipo-explicacion {
+    margin-top: 16px;
+    padding: 14px;
+    background: #ffffff;
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+/* CONTENEDOR */
+.tipo-botones {
+    display: flex;
+    gap: 10px;
+}
+
+/* BOTONES BASE (FLUENT STYLE) */
+.tipo-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    padding: 10px 8px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+
+    background: #f9f9f9;
+    color: #333;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease-in-out;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* HOVER (FLUENT MICROSOFT STYLE) */
+.tipo-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    border-color: #bbb;
+}
+
+/* CLICK EFFECT */
+.tipo-btn:active {
+    transform: scale(0.97);
+}
+
+/* =========================
+   PILL CONTAINER FLUENT (CORREGIDO)
+========================= */
+
+.pill-container {
+    position: relative;
+    display: flex;
+    background: #f2f3f5b5;
+    border-radius: 12px;
+    padding: 3px;
+    overflow: hidden;
+}
+
+/* BOTONES */
+.pill-container button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px;
+
+    cursor: pointer;
+    z-index: 2;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    color: #333;
+
+    transition: color 0.25s ease;
+}
+
+/* SLIDER ANIMADO */
+.pill-slider {
+    position: absolute;
+    width: 33.33%;
+    height: 100%;
+    border-radius: 10px;
+
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+}
+
+/* COLORES DEL SLIDER */
+.pill-slider.sencillo {
+    background: #107c10;
+}
+
+.pill-slider.tecnico {
+    background: #d83b01;
+}
+
+.pill-slider.ejemplo {
+    background: #5c2d91;
+}
+
+/* TEXTO SOBRE SLIDER */
+.pill-container button.active {
+    color: white;
+    font-weight: 600;
+}
+
+/* EFECTO HOVER SUAVE */
+.pill-container button:hover {
+    filter: brightness(1.05);
+}
