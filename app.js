@@ -228,50 +228,29 @@ function updateSelectedTextDisplay(text) {
 }
 
 function showResult(msg, type) {
-
     var resultDiv = document.getElementById("result");
-
     var bg = "#e8f0fe";
     var border = "#667eea";
-
+    
     if (type === "success") {
-
         bg = "#e6f4ea";
         border = "#34a853";
-
     } else if (type === "error") {
-
         bg = "#fce8e6";
         border = "#ea4335";
     }
-
-    // Limpiar markdown básico
-    var mensajeLimpio =
-        msg.replace(/\*\*/g, "")
-           .replace(/\*/g, "");
-
+    
+    // Limpiar markdown basico (negritas, etc.)
+    var mensajeLimpio = msg.replace(/\*\*/g, "").replace(/\*/g, "");
+    
     resultDiv.innerHTML =
-
-        "<div class='result-box' style='background:" +
-        bg +
-        "; border-left-color:" +
-        border +
-        ";'>" +
-
+    "<div class='result-box' style='background:" + bg + "; border-left-color:" + border + ";'>" +
         mensajeLimpio.replace(/\n/g, "<br>") +
+    "</div>";
 
-        "</div>" +
-
-        "<button onclick='nuevaConsulta()' class='new-query-btn'>" +
-        "Nueva consulta" +
-        "</button>";
-
-    // Cambiar texto botón
-    const btnText = document.querySelector("#explainBtn span");
-
-    if (btnText) {
-        btnText.textContent = "Generar otra explicación";
-    }
+    // Cambiar texto del botón después de responder
+    document.querySelector("#explainBtn span").textContent =
+        "Generar otra explicación";
 }
 
 function clearResult() {
