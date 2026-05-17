@@ -6,6 +6,7 @@
     <title>Asistente de Comprensión</title>
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
@@ -24,13 +25,19 @@
                     <li>Selecciona cualquier palabra o frase</li>
                     <li>Clic derecho y selecciona "Consultar"</li>
                     <li>El panel se abre automáticamente</li>
+                    <li>Presiona el icono 🗑️ para borrar y empezar una nueva consulta</li>
                 </ul>
             </div>
         </div>
 
         <div class="selection-box">
             <div class="selection-label">TEXTO SELECCIONADO</div>
-            <div id="selectedDisplay" class="selected-text empty">Ninguno</div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div id="selectedDisplay" class="selected-text empty">Ninguno</div>
+                <button id="clearAllBtn" class="clear-btn" title="Borrar todo">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
         </div>
 
         <!-- TIPOS DE EXPLICACIÓN -->
@@ -64,7 +71,6 @@
         </div>
     </div>
 
-    
     <script src="app.js"></script>
 </body>
 </html>

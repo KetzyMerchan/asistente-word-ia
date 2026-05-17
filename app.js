@@ -1,26 +1,113 @@
-Office.onReady(function() {
-    console.log("Office.js listo");
+// ========== INICIALIZACIÓN Y ESCUCHADORES ==========
+Office.onReady(function(info) {
+    console.log("Office.js listo - Asistente de Comprensión");
     
-    // Actualizar seleccion al abrir o volver al panel
-    window.addEventListener("focus", function () {
+    if (info.host === Office.HostType.Word) {
+        updateSelectedText();
+        verificarDisparoExterno();
 
-        cargarSeleccionActual();
-    });
+        window.addEventListener("storage", function(event) {
+            if (event.key === "consultarDesdeMenu" && event.newValue === "true") {
+                verificarDisparoExterno();
+            }
+        });
+
+        //   Detectar foco en el panel
+        window.addEventListener('focus', function() {
+            console.log("Panel enfocado");
+            if (localStorage.getItem("consultarDesdeMenu") === "true") {
+                verificarDisparoExterno();
+            }
+        });
+
+        //   Actualizar texto seleccionado al hacer clic en el panel
+        window.addEventListener('focus', function() {
+            console.log("Actualizar selección por foco");
+            cargarSeleccionActual();
+        });
+
+        const btn = document.getElementById("explainBtn");
+        if (btn) {
+            btn.onclick = ejecutarConsulta;
+        }
+
+        //  Botón de papelera - Borrar todo
+        const clearBtn = document.getElementById("clearAllBtn");
+        if (clearBtn) {
+            clearBtn.onclick = borrarTodo;
+        }
+    }
 });
 
 let tipoExplicacion = "sencillo";
 
-document.getElementById("explainBtn").onclick = function() {
+function verificarDisparoExterno() {
+    if (localStorage.getItem("consultarDesdeMenu") === "true") {
+        localStorage.removeItem("consultarDesdeMenu");
+        
+        //  Borrado directo y forzado
+        var resultDiv = document.getElementById("result");
+        if (resultDiv) {
+            resultDiv.innerHTML = "";
+            console.log("Resultado anterior borrado");
+        }
+        
+        setTimeout(function() {
+            ejecutarConsulta();
+        }, 100);
+    }
+}
+
+// ========== LÓGICA DE CONSULTA E IA ==========
+async function consultarIA(palabra, contexto) {
+    const tieneContextoSuficiente = contexto && contexto.trim().length > 20;
+
+    let prompt = "";
+    if (tieneContextoSuficiente) {
+        prompt = `Explica qué significa "${palabra}" en esta oración: "${contexto}". 
+Tipo de explicación: ${tipoExplicacion}
+
+    Instrucciones según tipo:
+    - sencillo: explicación básica para estudiantes principiantes
+    - tecnico: explicación formal, académica y precisa
+    - ejemplo: incluye un ejemplo práctico para facilitar comprensión
+
+Instrucciones:
+- Respuesta de máximo 35 palabras.
+- No copies la oración del contexto.
+- Da una definición clara y, si es relevante, su propósito o una característica clave.
+- Usa la estructura: "[Término] es un/una [definición]" o "[Término] se refiere a [definición]".`;
+    } else {
+        prompt = `Define "${palabra}" de forma general, indicando su propósito o los campos donde se usa. Usa la estructura: "[Término] es un/una [definición]" o "[Término] se refiere a [definición]". Máximo 35 palabras.`;
+    }
+
+    try {
+        const respuesta = await fetch("https://localhost:3000/ia", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt })
+        });
+        const data = await respuesta.json();
+        if (!respuesta.ok) {
+            console.error("Error backend:", data);
+            return data.error || "Error al conectar con el servidor.";
+        }
+        return data.respuesta || "Sin respuesta del modelo.";
+    } catch (error) {
+        console.error("Error fetch:", error);
+        return "Error de conexión con el backend.";
+    }
+}
+
+function ejecutarConsulta() {
     showLoading(true);
     clearResult();
-    
+
     Word.run(async function(context) {
         try {
-            // Obtener el texto seleccionado
             var selection = context.document.getSelection();
             selection.load("text");
             
-            // Obtener automaticamente el parrafo donde esta la seleccion
             var paragraph = selection.paragraphs.getFirst();
             paragraph.load("text");
             
@@ -33,19 +120,16 @@ document.getElementById("explainBtn").onclick = function() {
                 showLoading(false);
                 return;
             }
-            
-            // Actualizar display del texto seleccionado
+
             updateSelectedTextDisplay(selectedText);
             
-            // Obtener contexto mas amplio (el parrafo completo)
             var contextoCompleto = paragraph.text || selectedText;
             
-            // Llamar API para obtener la explicacion
             var explicacion = await consultarIA(selectedText, contextoCompleto);
             
             showResult(explicacion, "success");
             showLoading(false);
-            
+
         } catch (error) {
             console.error(error);
             showResult("Error al procesar la solicitud: " + error.message, "error");
@@ -53,59 +137,21 @@ document.getElementById("explainBtn").onclick = function() {
         }
     }).catch(function(error) {
         console.error(error);
-        showResult("Error al leer el documento. Asegurate de estar en Word Online.", "error");
+        showResult("Error al leer el documento. Asegúrate de estar en Word Online.", "error");
         showLoading(false);
     });
-};
+}
 
-async function consultarIA(palabra, contexto) {
 
-    const prompt = `
-    Eres un asistente académico integrado en Microsoft Word.
-
-    Texto seleccionado:
-    "${palabra}"
-
-    Contexto:
-    "${contexto}"
-
-    Tipo de explicación: ${tipoExplicacion}
-
-    Instrucciones según tipo:
-    - sencillo: explicación básica para estudiantes principiantes
-    - tecnico: explicación formal, académica y precisa
-    - ejemplo: incluye un ejemplo práctico para facilitar comprensión
-
-    Reglas:
-    - Español
-    - Máximo 3 oraciones
-    - No inventar información
-    - No repetir el contexto
-    `;
-
-    try {
-
-        const respuesta = await fetch("http://localhost:3000/ia", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ prompt })
+// ========== FUNCIONES DE INTERFAZ (UI) ==========
+function updateSelectedText() {
+    Word.run(function(context) {
+        var selection = context.document.getSelection();
+        selection.load("text");
+        return context.sync().then(function() {
+            updateSelectedTextDisplay(selection.text);
         });
-        const data = await respuesta.json();
-
-        if (!respuesta.ok) {
-            console.error("Error backend:", data);
-            return data.error || "Error al conectar con el servidor.";
-        }
-
-        return data.respuesta || "Sin respuesta del modelo.";
-
-    } catch (error) {
-
-        console.error("Error fetch:", error);
-        return "Error de conexion con el backend.";
-    }
+    }).catch(function() {});
 }
 
 function updateSelectedTextDisplay(text) {
@@ -122,10 +168,9 @@ function updateSelectedTextDisplay(text) {
 
 function showResult(msg, type) {
     var resultDiv = document.getElementById("result");
-
     var bg = "#e8f0fe";
     var border = "#667eea";
-
+    
     if (type === "success") {
         bg = "#e6f4ea";
         border = "#34a853";
@@ -133,18 +178,14 @@ function showResult(msg, type) {
         bg = "#fce8e6";
         border = "#ea4335";
     }
-
+    
     // Limpiar markdown basico (negritas, etc.)
     var mensajeLimpio = msg.replace(/\*\*/g, "").replace(/\*/g, "");
     
     resultDiv.innerHTML =
     "<div class='result-box' style='background:" + bg + "; border-left-color:" + border + ";'>" +
         mensajeLimpio.replace(/\n/g, "<br>") +
-    "</div>" +
-
-    "<button onclick='nuevaConsulta()' class='new-query-btn'>" +
-        "Nueva consulta" +
-    "</button>";
+    "</div>";
 
     // Cambiar texto del botón después de responder
     document.querySelector("#explainBtn span").textContent =
@@ -152,15 +193,21 @@ function showResult(msg, type) {
 }
 
 function clearResult() {
-    document.getElementById("result").innerHTML = "";
+    var resultDiv = document.getElementById("result");
+    if (resultDiv) {
+        resultDiv.innerHTML = "";
+        console.log("clearResult ejecutado");
+    }
 }
 
 function showLoading(show) {
     var loader = document.getElementById("loading");
-    if (show) {
-        loader.classList.remove("hidden");
-    } else {
-        loader.classList.add("hidden");
+    if (loader) {
+        if (show) {
+            loader.classList.remove("hidden");
+        } else {
+            loader.classList.add("hidden");
+        }
     }
 }
 
@@ -209,23 +256,40 @@ function setTipo(tipo) {
     });
 }
 
+// ========== FUNCIÓN: BORRAR TODO ==========
+function borrarTodo() {
+    // Borrar resultado de la IA
+    const resultDiv = document.getElementById("result");
+    if (resultDiv) {
+        resultDiv.innerHTML = "";
+    }
+    
+    // Limpiar el texto seleccionado mostrado
+    const selectedDisplay = document.getElementById("selectedDisplay");
+    if (selectedDisplay) {
+        selectedDisplay.innerHTML = "Ninguno";
+        selectedDisplay.classList.add("empty");
+    }
+    
+    // Ocultar loading si está visible
+    const loader = document.getElementById("loading");
+    if (loader) {
+        loader.classList.add("hidden");
+    }
+    
+    console.log(" Todo borrado por el usuario");
+}
+
+// ==========  FUNCIÓN: CARGAR SELECCIÓN ACTUAL ==========
 function cargarSeleccionActual() {
-
-    Word.run(function (context) {
-
+    Word.run(function(context) {
         var selection = context.document.getSelection();
         selection.load("text");
-
-        return context.sync().then(function () {
-
+        return context.sync().then(function() {
             updateSelectedTextDisplay(selection.text);
-
         });
-
-    }).catch(function (error) {
-
-        console.log("No se pudo actualizar seleccion:", error);
-
+    }).catch(function(error) {
+        console.log("No se pudo actualizar selección:", error);
     });
 }
 

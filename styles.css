@@ -121,6 +121,7 @@ h1 {
     color: #1a2a3a;
     word-break: break-word;
     border: 1px solid #e1e5e9;
+    flex: 1;
 }
 
 .selected-text.empty {
@@ -212,28 +213,33 @@ h1 {
     display: none !important;
 }
 
-.new-query-btn {
-    width: 100%;
-    background: #34a853;
-    color: white;
+/* Botón de papelera - Font Awesome */
+.clear-btn {
+    background: transparent;
     border: none;
-    padding: 12px 16px;
-    border-radius: 14px;
-    font-weight: 600;
-    font-size: 14px;
     cursor: pointer;
-    margin-top: 12px;
-    transition: all 0.2s;
+    font-size: 18px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.new-query-btn:hover {
-    background: #2f9447;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(52, 168, 83, 0.3);
+.clear-btn:hover {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    transform: scale(1.05);
+}
+
+.clear-btn:active {
+    transform: scale(0.95);
 }
 
 /* =========================
-   FLUENT UI - TIPOS EXPLICACIÓN
+   PILL CONTAINER FLUENT
 ========================= */
 
 .tipo-explicacion {
@@ -245,52 +251,6 @@ h1 {
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
-/* CONTENEDOR */
-.tipo-botones {
-    display: flex;
-    gap: 10px;
-}
-
-/* BOTONES BASE (FLUENT STYLE) */
-.tipo-btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-
-    padding: 10px 8px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-
-    background: #f9f9f9;
-    color: #333;
-
-    cursor: pointer;
-
-    transition: all 0.25s ease-in-out;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-
-    font-size: 12px;
-    font-weight: 500;
-}
-
-/* HOVER (FLUENT MICROSOFT STYLE) */
-.tipo-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    border-color: #bbb;
-}
-
-/* CLICK EFFECT */
-.tipo-btn:active {
-    transform: scale(0.97);
-}
-
-/* =========================
-   PILL CONTAINER FLUENT (CORREGIDO)
-========================= */
-
 .pill-container {
     position: relative;
     display: flex;
@@ -300,41 +260,32 @@ h1 {
     overflow: hidden;
 }
 
-/* BOTONES */
 .pill-container button {
     flex: 1;
     border: none;
     background: transparent;
     padding: 10px;
-
     cursor: pointer;
     z-index: 2;
-
     font-size: 12px;
     font-weight: 500;
-
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-
     color: #333;
-
     transition: color 0.25s ease;
 }
 
-/* SLIDER ANIMADO */
 .pill-slider {
     position: absolute;
     width: 33.33%;
     height: 100%;
     border-radius: 10px;
-
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1;
 }
 
-/* COLORES DEL SLIDER */
 .pill-slider.sencillo {
     background: #107c10;
 }
@@ -347,13 +298,11 @@ h1 {
     background: #5c2d91;
 }
 
-/* TEXTO SOBRE SLIDER */
 .pill-container button.active {
     color: white;
     font-weight: 600;
 }
 
-/* EFECTO HOVER SUAVE */
 .pill-container button:hover {
     filter: brightness(1.05);
 }
