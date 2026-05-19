@@ -279,6 +279,12 @@ function borrarTodo() {
     if (loader) {
         loader.classList.add("hidden");
     }
+
+    // Restaurar botón al estado inicial
+    const btnText = document.querySelector("#explainBtn span");
+    if (btnText) {
+        btnText.textContent = "Explicar";
+    }
     
     console.log(" Todo borrado por el usuario");
 }
